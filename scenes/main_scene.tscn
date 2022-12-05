@@ -24,11 +24,18 @@ name = "ATTACK"
 [sub_resource type="Resource" id=43]
 script = ExtResource( 7 )
 __meta__ = {
-"graph_offset": Vector2( 188, 80 )
+"graph_offset": Vector2( 48, 80 )
 }
 name = "Entry"
 
-[sub_resource type="Resource" id=47]
+[sub_resource type="Resource" id=62]
+script = ExtResource( 7 )
+__meta__ = {
+"graph_offset": Vector2( 344, 20 )
+}
+name = "PATROL"
+
+[sub_resource type="Resource" id=63]
 script = ExtResource( 7 )
 __meta__ = {
 "graph_offset": Vector2( 583.5, 20 )
@@ -41,13 +48,6 @@ __meta__ = {
 "graph_offset": Vector2( 324.5, 180 )
 }
 name = "SEEK_TARGET"
-
-[sub_resource type="Resource" id=62]
-script = ExtResource( 7 )
-__meta__ = {
-"graph_offset": Vector2( 344, 20 )
-}
-name = "PATROL"
 
 [sub_resource type="Resource" id=60]
 script = ExtResource( 8 )
@@ -154,7 +154,7 @@ states = {
 "ATTACK": SubResource( 57 ),
 "Entry": SubResource( 43 ),
 "PATROL": SubResource( 62 ),
-"PATROL_WAIT": SubResource( 47 ),
+"PATROL_WAIT": SubResource( 63 ),
 "SEEK_TARGET": SubResource( 52 )
 }
 transitions = {
@@ -258,6 +258,10 @@ script = ExtResource( 2 )
 [node name="Detector" type="Spatial" parent="Navigation/Tank"]
 script = ExtResource( 10 )
 
+[node name="PatrolWait" type="Timer" parent="Navigation/Tank"]
+wait_time = 0.25
+one_shot = true
+
 [node name="StateMachinePlayer" type="Node" parent="Navigation/Tank"]
 script = ExtResource( 5 )
 state_machine = SubResource( 46 )
@@ -282,24 +286,28 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.54131, 0.883996, 3.9166 )
 material_override = SubResource( 37 )
 mesh = SubResource( 5 )
 skeleton = NodePath("../..")
+material/0 = null
 
 [node name="Obstacle3" type="MeshInstance" parent="Navigation/NavigationMeshInstance"]
 transform = Transform( 1.16744, 0, 0, 0, 0.121778, 0, 0, 0, 1.16744, -3.55071, -0.0209236, 3.90367 )
 material_override = SubResource( 40 )
 mesh = SubResource( 5 )
 skeleton = NodePath("../..")
+material/0 = null
 
 [node name="Obstacle2" type="MeshInstance" parent="Navigation/NavigationMeshInstance"]
 transform = Transform( 0.529943, 0, 0, 0, 0.529943, 0, 0, 0, 0.529943, 5.8268, 0.416834, -3.75273 )
 material_override = SubResource( 38 )
 mesh = SubResource( 5 )
 skeleton = NodePath("../..")
+material/0 = null
 
 [node name="Obstacle4" type="MeshInstance" parent="Navigation/NavigationMeshInstance"]
 transform = Transform( 0.678216, 0, 0, 0, 0.113201, 0, 0, 0, 0.678216, 5.8268, -0.0375923, -3.75273 )
 material_override = SubResource( 41 )
 mesh = SubResource( 5 )
 skeleton = NodePath("../..")
+material/0 = null
 
 [node name="Target" parent="Navigation/NavigationMeshInstance" instance=ExtResource( 9 )]
 
@@ -335,5 +343,7 @@ shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
 environment = SubResource( 19 )
+
+[connection signal="timeout" from="Navigation/Tank/PatrolWait" to="Navigation/Tank" method="_on_PatrolWait_timeout"]
 
 [editable path="Navigation/Tank/TankMesh/Mesh"]

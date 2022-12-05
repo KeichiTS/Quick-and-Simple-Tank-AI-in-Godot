@@ -14,7 +14,7 @@ var tank: KinematicBody
 var tank_mesh: Spatial
 
 func _ready():
-	tank = $"../../Tank"
+	tank = $".."
 	tank_mesh = $"../TankMesh"
 	
 func _process(delta):
