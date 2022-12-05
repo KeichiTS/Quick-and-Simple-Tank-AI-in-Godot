@@ -1,0 +1,339 @@
+[gd_scene load_steps=46 format=2]
+
+[ext_resource path="res://models/tank.glb" type="PackedScene" id=1]
+[ext_resource path="res://scripts/mover_script.gd" type="Script" id=2]
+[ext_resource path="res://scripts/tank_script.gd" type="Script" id=3]
+[ext_resource path="res://addons/imjp94.yafsm/src/states/StateMachine.gd" type="Script" id=4]
+[ext_resource path="res://addons/imjp94.yafsm/src/StateMachinePlayer.gd" type="Script" id=5]
+[ext_resource path="res://addons/imjp94.yafsm/src/transitions/Transition.gd" type="Script" id=6]
+[ext_resource path="res://addons/imjp94.yafsm/src/states/State.gd" type="Script" id=7]
+[ext_resource path="res://addons/imjp94.yafsm/src/conditions/BooleanCondition.gd" type="Script" id=8]
+[ext_resource path="res://prefabs/target_prefab.tscn" type="PackedScene" id=9]
+[ext_resource path="res://scripts/detector_script.gd" type="Script" id=10]
+
+[sub_resource type="BoxShape" id=6]
+extents = Vector3( 0.373996, 0.360552, 0.48915 )
+
+[sub_resource type="Resource" id=57]
+script = ExtResource( 7 )
+__meta__ = {
+"graph_offset": Vector2( 608, 180 )
+}
+name = "ATTACK"
+
+[sub_resource type="Resource" id=43]
+script = ExtResource( 7 )
+__meta__ = {
+"graph_offset": Vector2( 188, 80 )
+}
+name = "Entry"
+
+[sub_resource type="Resource" id=47]
+script = ExtResource( 7 )
+__meta__ = {
+"graph_offset": Vector2( 583.5, 20 )
+}
+name = "PATROL_WAIT"
+
+[sub_resource type="Resource" id=52]
+script = ExtResource( 7 )
+__meta__ = {
+"graph_offset": Vector2( 324.5, 180 )
+}
+name = "SEEK_TARGET"
+
+[sub_resource type="Resource" id=62]
+script = ExtResource( 7 )
+__meta__ = {
+"graph_offset": Vector2( 344, 20 )
+}
+name = "PATROL"
+
+[sub_resource type="Resource" id=60]
+script = ExtResource( 8 )
+name = "is_target_in_range"
+comparation = 0
+value = false
+
+[sub_resource type="Resource" id=61]
+script = ExtResource( 6 )
+from = "ATTACK"
+to = "SEEK_TARGET"
+conditions = {
+"is_target_in_range": SubResource( 60 )
+}
+priority = 0
+
+[sub_resource type="Resource" id=45]
+script = ExtResource( 6 )
+from = "Entry"
+to = "PATROL"
+conditions = {
+}
+priority = 0
+
+[sub_resource type="Resource" id=48]
+script = ExtResource( 8 )
+name = "is_patrol_wait"
+comparation = 0
+value = true
+
+[sub_resource type="Resource" id=49]
+script = ExtResource( 6 )
+from = "PATROL"
+to = "PATROL_WAIT"
+conditions = {
+"is_patrol_wait": SubResource( 48 )
+}
+priority = 0
+
+[sub_resource type="Resource" id=53]
+script = ExtResource( 8 )
+name = "is_seeking_targets"
+comparation = 0
+value = true
+
+[sub_resource type="Resource" id=54]
+script = ExtResource( 6 )
+from = "PATROL"
+to = "SEEK_TARGET"
+conditions = {
+"is_seeking_targets": SubResource( 53 )
+}
+priority = 0
+
+[sub_resource type="Resource" id=50]
+script = ExtResource( 8 )
+name = "is_patrol_wait"
+comparation = 0
+value = false
+
+[sub_resource type="Resource" id=51]
+script = ExtResource( 6 )
+from = "PATROL_WAIT"
+to = "PATROL"
+conditions = {
+"is_patrol_wait": SubResource( 50 )
+}
+priority = 0
+
+[sub_resource type="Resource" id=58]
+script = ExtResource( 8 )
+name = "is_target_in_range"
+comparation = 0
+value = true
+
+[sub_resource type="Resource" id=59]
+script = ExtResource( 6 )
+from = "SEEK_TARGET"
+to = "ATTACK"
+conditions = {
+"is_target_in_range": SubResource( 58 )
+}
+priority = 0
+
+[sub_resource type="Resource" id=55]
+script = ExtResource( 8 )
+name = "is_seeking_targets"
+comparation = 0
+value = false
+
+[sub_resource type="Resource" id=56]
+script = ExtResource( 6 )
+from = "SEEK_TARGET"
+to = "PATROL"
+conditions = {
+"is_seeking_targets": SubResource( 55 )
+}
+priority = 0
+
+[sub_resource type="Resource" id=46]
+script = ExtResource( 4 )
+name = ""
+states = {
+"ATTACK": SubResource( 57 ),
+"Entry": SubResource( 43 ),
+"PATROL": SubResource( 62 ),
+"PATROL_WAIT": SubResource( 47 ),
+"SEEK_TARGET": SubResource( 52 )
+}
+transitions = {
+"ATTACK": {
+"SEEK_TARGET": SubResource( 61 )
+},
+"Entry": {
+"PATROL": SubResource( 45 )
+},
+"PATROL": {
+"PATROL_WAIT": SubResource( 49 ),
+"SEEK_TARGET": SubResource( 54 )
+},
+"PATROL_WAIT": {
+"PATROL": SubResource( 51 )
+},
+"SEEK_TARGET": {
+"ATTACK": SubResource( 59 ),
+"PATROL": SubResource( 56 )
+}
+}
+
+[sub_resource type="NavigationMesh" id=4]
+vertices = PoolVector3Array( -5.8, 0.249207, 9.5, -5.8, 0.249207, 9.2, -7, 0.249207, 8.9, -9.4, 0.249207, 9.5, -5.2, 0.249207, 6.8, -4.6, 0.249207, 5.6, -5.2, 0.249207, 5.3, -7, 0.249207, 7.1, -9.4, 0.249207, -0.0999994, -9.4, 0.249207, 9.5, -7, 0.249207, 7.1, -5.2, 0.249207, 2.6, -9.4, 0.249207, -0.0999994, -5.2, 0.249207, 2.6, -2.5, 0.249207, 2.3, -1.3, 0.249207, -4.6, -1.3, 0.249207, -6.1, -9.4, 0.249207, -9.4, -9.4, 0.249207, 9.5, -7, 0.249207, 8.9, -7, 0.249207, 7.1, -1.3, 0.249207, -6.1, -0.0999994, 0.249207, -6.7, -0.0999994, 0.249207, -9.4, -9.4, 0.249207, -9.4, -7, 0.249207, 7.1, -5.2, 0.249207, 5.3, -5.2, 0.249207, 2.6, -2.5, 0.249207, 2.3, -0.7, 0.249207, -4.3, -1.3, 0.249207, -4.6, 4.4, 0.249207, -4.3, 5.6, 1.24921, -4.3, 7.1, 0.249207, -4.6, 7.7, 0.249207, -6.1, -0.0999994, 0.249207, -9.4, -0.0999994, 0.249207, -6.7, 1.1, 0.249207, -6.4, 1.1, 0.249207, -6.4, 4.4, 0.249207, -4.3, 7.7, 0.249207, -6.1, 9.5, 0.249207, -9.4, -0.0999994, 0.249207, -9.4, 7.7, 0.249207, -6.1, 9.5, 0.249207, -6.1, 9.5, 0.249207, -9.4, 1.1, 0.249207, -6.4, 1.1, 0.249207, -4.6, 4.4, 0.249207, -4.3, -4.6, 0.249207, 8.9, -5.8, 0.249207, 9.2, -5.8, 0.249207, 9.5, 1.7, 0.249207, 9.5, -4.6, 0.249207, 5.6, -5.2, 0.249207, 6.8, -4.6, 0.249207, 7.1, -1.9, 0.249207, 5.3, 7.7, 0.249207, -3.7, 7.1, 0.249207, -4.6, 5.6, 1.24921, -4.3, 5.6, 0.449207, -2.8, -0.7, 0.249207, -4.3, -2.5, 0.249207, 2.3, -1.9, 0.249207, 2.6, -1.9, 0.249207, 2.6, -1.9, 0.249207, 5.3, 1.7, 0.249207, 9.5, 4.4, 0.249207, -2.8, 4.4, 0.249207, -4.3, 1.1, 0.249207, -4.6, -0.7, 0.249207, -4.3, 9.5, 0.249207, -4, 7.7, 0.249207, -3.7, 5.6, 0.449207, -2.8, 9.5, 0.249207, 2.6, -1.9, 0.249207, 5.3, -4.6, 0.249207, 7.1, -4.6, 0.249207, 8.9, 1.7, 0.249207, 9.5, 9.5, 0.249207, 2.6, 5.6, 0.449207, -2.8, 4.4, 0.249207, -2.8, 4.4, 0.249207, -2.8, -0.7, 0.249207, -4.3, -1.9, 0.249207, 2.6, 1.7, 0.249207, 9.5, 9.5, 0.249207, 9.5, 9.5, 0.249207, 2.6 )
+polygons = [ PoolIntArray( 1, 0, 2 ), PoolIntArray( 2, 0, 3 ), PoolIntArray( 5, 4, 6 ), PoolIntArray( 6, 4, 7 ), PoolIntArray( 10, 9, 11 ), PoolIntArray( 11, 9, 8 ), PoolIntArray( 13, 12, 14 ), PoolIntArray( 14, 12, 15 ), PoolIntArray( 15, 12, 16 ), PoolIntArray( 16, 12, 17 ), PoolIntArray( 18, 20, 19 ), PoolIntArray( 22, 21, 23 ), PoolIntArray( 23, 21, 24 ), PoolIntArray( 27, 26, 25 ), PoolIntArray( 30, 29, 28 ), PoolIntArray( 32, 31, 33 ), PoolIntArray( 33, 31, 34 ), PoolIntArray( 35, 37, 36 ), PoolIntArray( 38, 42, 39 ), PoolIntArray( 39, 42, 40 ), PoolIntArray( 40, 42, 41 ), PoolIntArray( 45, 44, 43 ), PoolIntArray( 48, 47, 46 ), PoolIntArray( 50, 49, 51 ), PoolIntArray( 51, 49, 52 ), PoolIntArray( 54, 53, 55 ), PoolIntArray( 55, 53, 56 ), PoolIntArray( 58, 57, 59 ), PoolIntArray( 59, 57, 60 ), PoolIntArray( 63, 62, 61 ), PoolIntArray( 66, 65, 64 ), PoolIntArray( 68, 67, 69 ), PoolIntArray( 69, 67, 70 ), PoolIntArray( 72, 71, 73 ), PoolIntArray( 73, 71, 74 ), PoolIntArray( 76, 75, 77 ), PoolIntArray( 77, 75, 78 ), PoolIntArray( 79, 81, 80 ), PoolIntArray( 83, 82, 84 ), PoolIntArray( 84, 82, 87 ), PoolIntArray( 84, 87, 85 ), PoolIntArray( 85, 87, 86 ) ]
+
+[sub_resource type="PlaneMesh" id=1]
+
+[sub_resource type="SpatialMaterial" id=3]
+albedo_color = Color( 0.901961, 0.564706, 0.305882, 1 )
+
+[sub_resource type="ConcavePolygonShape" id=2]
+data = PoolVector3Array( 1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, -1, 0, -1, 1, 0, -1 )
+
+[sub_resource type="SpatialMaterial" id=37]
+albedo_color = Color( 0.301961, 0.607843, 0.901961, 1 )
+
+[sub_resource type="CubeMesh" id=5]
+
+[sub_resource type="SpatialMaterial" id=40]
+albedo_color = Color( 0.0941176, 0.192157, 0.290196, 1 )
+
+[sub_resource type="SpatialMaterial" id=38]
+albedo_color = Color( 0.658824, 0.517647, 0.952941, 1 )
+
+[sub_resource type="SpatialMaterial" id=41]
+albedo_color = Color( 0.282353, 0.227451, 0.396078, 1 )
+
+[sub_resource type="CubeMesh" id=33]
+
+[sub_resource type="SpatialMaterial" id=34]
+albedo_color = Color( 0.901961, 0.564706, 0.305882, 1 )
+
+[sub_resource type="SpatialMaterial" id=35]
+albedo_color = Color( 0.803922, 0.407843, 0.239216, 1 )
+
+[sub_resource type="SpatialMaterial" id=36]
+albedo_color = Color( 0.619608, 0.270588, 0.223529, 1 )
+
+[sub_resource type="ProceduralSky" id=42]
+
+[sub_resource type="Environment" id=19]
+background_mode = 2
+background_sky = SubResource( 42 )
+ambient_light_sky_contribution = 0.41
+fog_color = Color( 0.164706, 0.192157, 0.223529, 1 )
+tonemap_mode = 2
+tonemap_exposure = 1.05
+
+[node name="Spatial" type="Spatial"]
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 0.707107, -0.293637, 0.643255, 0, 0.909701, 0.415265, -0.707107, -0.293637, 0.643255, 10.877, 4.482, 10.815 )
+projection = 1
+size = 19.61
+__meta__ = {
+"_editor_description_": ""
+}
+
+[node name="Navigation" type="Navigation" parent="."]
+
+[node name="Tank" type="KinematicBody" parent="Navigation"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.242381, 0 )
+script = ExtResource( 3 )
+
+[node name="TankMesh" type="Spatial" parent="Navigation/Tank"]
+
+[node name="Mesh" parent="Navigation/Tank/TankMesh" instance=ExtResource( 1 )]
+transform = Transform( -0.3, 0, -4.52987e-08, 0, 0.3, 0, 4.52987e-08, 0, -0.3, 0, 0.132621, 0 )
+
+[node name="TurretMuzzle" type="Spatial" parent="Navigation/Tank/TankMesh"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.458805, -0.577245 )
+
+[node name="CollisionShape" type="CollisionShape" parent="Navigation/Tank"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.21465, 0.00465969 )
+shape = SubResource( 6 )
+
+[node name="Mover" type="Spatial" parent="Navigation/Tank"]
+script = ExtResource( 2 )
+
+[node name="Detector" type="Spatial" parent="Navigation/Tank"]
+script = ExtResource( 10 )
+
+[node name="StateMachinePlayer" type="Node" parent="Navigation/Tank"]
+script = ExtResource( 5 )
+state_machine = SubResource( 46 )
+
+[node name="NavigationMeshInstance" type="NavigationMeshInstance" parent="Navigation"]
+navmesh = SubResource( 4 )
+
+[node name="Ground" type="MeshInstance" parent="Navigation/NavigationMeshInstance"]
+transform = Transform( 10, 0, 0, 0, 1, 0, 0, 0, 10, 0, 0, 0 )
+mesh = SubResource( 1 )
+material/0 = SubResource( 3 )
+
+[node name="StaticBody" type="StaticBody" parent="Navigation/NavigationMeshInstance/Ground"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape" type="CollisionShape" parent="Navigation/NavigationMeshInstance/Ground/StaticBody"]
+shape = SubResource( 2 )
+
+[node name="Obstacle1" type="MeshInstance" parent="Navigation/NavigationMeshInstance"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -3.54131, 0.883996, 3.9166 )
+material_override = SubResource( 37 )
+mesh = SubResource( 5 )
+skeleton = NodePath("../..")
+
+[node name="Obstacle3" type="MeshInstance" parent="Navigation/NavigationMeshInstance"]
+transform = Transform( 1.16744, 0, 0, 0, 0.121778, 0, 0, 0, 1.16744, -3.55071, -0.0209236, 3.90367 )
+material_override = SubResource( 40 )
+mesh = SubResource( 5 )
+skeleton = NodePath("../..")
+
+[node name="Obstacle2" type="MeshInstance" parent="Navigation/NavigationMeshInstance"]
+transform = Transform( 0.529943, 0, 0, 0, 0.529943, 0, 0, 0, 0.529943, 5.8268, 0.416834, -3.75273 )
+material_override = SubResource( 38 )
+mesh = SubResource( 5 )
+skeleton = NodePath("../..")
+
+[node name="Obstacle4" type="MeshInstance" parent="Navigation/NavigationMeshInstance"]
+transform = Transform( 0.678216, 0, 0, 0, 0.113201, 0, 0, 0, 0.678216, 5.8268, -0.0375923, -3.75273 )
+material_override = SubResource( 41 )
+mesh = SubResource( 5 )
+skeleton = NodePath("../..")
+
+[node name="Target" parent="Navigation/NavigationMeshInstance" instance=ExtResource( 9 )]
+
+[node name="Target2" parent="Navigation/NavigationMeshInstance" instance=ExtResource( 9 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 8.4984, 0.65013, -4.96684 )
+
+[node name="Target3" parent="Navigation/NavigationMeshInstance" instance=ExtResource( 9 )]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -5.77329, 0.650129, 8.03008 )
+
+[node name="Environment" type="Spatial" parent="."]
+
+[node name="Island_A" type="MeshInstance" parent="Environment"]
+transform = Transform( 10, 0, 0, 0, 0.509, 0, 0, 0, 10, 0, -0.519, 0 )
+mesh = SubResource( 33 )
+skeleton = NodePath("../..")
+material/0 = SubResource( 34 )
+
+[node name="Island_B" type="MeshInstance" parent="Environment"]
+transform = Transform( 10, 0, 0, 0, 1.057, 0, 0, 0, 10, 0, -2.128, 0 )
+mesh = SubResource( 33 )
+skeleton = NodePath("../..")
+material/0 = SubResource( 35 )
+
+[node name="Island_C" type="MeshInstance" parent="Environment"]
+transform = Transform( 10, 0, 0, 0, 1.283, 0, 0, 0, 10, 0, -4.503, 0 )
+mesh = SubResource( 33 )
+skeleton = NodePath("../..")
+material/0 = SubResource( 36 )
+
+[node name="DirectionalLight" type="DirectionalLight" parent="Environment"]
+transform = Transform( 0.38106, -0.46163, 0.801056, 0.0856956, 0.880334, 0.46655, -0.92057, -0.109137, 0.37502, 0, 3.24138, 0 )
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment"]
+environment = SubResource( 19 )
+
+[editable path="Navigation/Tank/TankMesh/Mesh"]
